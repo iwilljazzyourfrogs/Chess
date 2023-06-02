@@ -4,53 +4,36 @@ int tileSize = 80;
 int borderSize = 10;
 PImage[][] imgs = new PImage[2][6];
 
-Piece[][] board = new Piece[8][8];
+ArrayList<Piece> pieces = new ArrayList<Piece>();
 
 void loadStartPosition() {
-  clearBoard();
-
+  pieces = new ArrayList<Piece>();
+  
   for (int i = 0; i < 2; i++) {
-    board[0][7 * i] = new Piece(1, i);
-    board[1][7 * i] = new Piece(2, i);
-    board[2][7 * i] = new Piece(3, i);
-    board[3][7 * i] = new Piece(5, i);
-    board[4][7 * i] = new Piece(4, i);
-    board[5][7 * i] = new Piece(0, i);
-    board[6][7 * i] = new Piece(2, i);
-    board[7][7 * i] = new Piece(1, i);
+    pieces.add(new Piece(1, i, 0, 7 * i));
+    pieces.add(new Piece(2, i, 1, 7 * i));
+    pieces.add(new Piece(3, i, 2, 7 * i));
+    pieces.add(new Piece(5, i, 3, 7 * i));
+    pieces.add(new Piece(4, i, 4, 7 * i));
+    pieces.add(new Piece(3, i, 5, 7 * i));
+    pieces.add(new Piece(2, i, 6, 7 * i));
+    pieces.add(new Piece(1, i, 7, 7 * i));
+    
     for (int j = 0; j < 8; j++) {
-      board[j][5 * i + 1] = new Piece(0, i);
+      pieces.add(new Piece(0, i, j, 5 * i + 1));
     }
   }
 }
 
-int[] fileRankToIndex(char file, int rank) {
-  switch(file) {
-  case 'a':
-    return new int[] {0, 8 - rank};
-  case 'b':
-    return new int[] {0, 8 - rank};
-  case 'c':
-    return new int[] {0, 8 - rank};
-  case 'd':
-    return new int[] {0, 8 - rank};
-  case 'e':
-    return new int[] {0, 8 - rank};
-  case 'f':
-    return new int[] {0, 8 - rank};
-  case 'g':
-    return new int[] {0, 8 - rank};
-  case 'h':
-    return new int[] {0, 8 - rank};
+void mousePressed() {
+  for (Piece p : pieces) {
+    p.dragStart();
   }
-  return new int[] {-1, -1};
 }
 
-void clearBoard() {
-  for (int i = 0; i < 8; i++) {
-    for (int j = 0; j < 8; j++) {
-      board[i][j] = new Piece(-1, -1);
-    }
+void mouseReleased() {
+  for (Piece p : pieces) {
+    p.dragStop();
   }
 }
 
@@ -92,7 +75,11 @@ void draw() {
       }
       fill(current);
       rect(tileSize * x + borderSize, tileSize * y + borderSize, tileSize, tileSize);
-      board[x][y].render(x, y);
     }
+  }
+  
+  for (Piece p : pieces) {
+    p.mouseDragged();
+    p.renderStill();
   }
 }
